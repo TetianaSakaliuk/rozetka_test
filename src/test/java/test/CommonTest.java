@@ -1,8 +1,8 @@
 package test;
 
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-
 /**
  * Created by Tetiana on 05.02.2017.
  */
@@ -25,8 +24,7 @@ abstract class CommonTest {
     protected String targetURL = "http://rozetka.com.ua/";
     protected WebDriver driver;
 
-
-    @BeforeClass
+     @BeforeClass
     void signIn() {
         createWebDriver();
         driver.navigate().to(targetURL);
@@ -36,7 +34,9 @@ abstract class CommonTest {
     private void createWebDriver() {
         System.setProperty("webdriver.chrome.driver", "c:\\Program Files (x86)\\Google\\Chrome\\Application\\chromedriver.exe");
         System.out.println("Creating webDriver");
-        driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--start-maximized");
+        driver = new ChromeDriver(options);
     }
 
     @AfterClass(alwaysRun = true)
@@ -46,7 +46,7 @@ abstract class CommonTest {
 
     void writeResultsToDb(List<Map> resultsList) {
         String tableName = this.getClass().getName() + "_" + System.currentTimeMillis();
-
+        // create a sql query string to create table for test results
         String createTestTable = "CREATE TABLE " + tableName + " ("
                 + "idItem INTEGER NOT NULL AUTO_INCREMENT,";
         Set<String> setOfColumns = resultsList.get(0).keySet();
@@ -61,9 +61,8 @@ abstract class CommonTest {
             String myUrl = "jdbc:mysql://localhost:3306/test";
             Class.forName(myDriver);
             Connection conn = DriverManager.getConnection(myUrl, "root", "humbert");
-
             Statement st = conn.createStatement();
-
+            // execute SQL query to create table
             st.executeUpdate(createTestTable);
             String listOfColumns = " (";
             for (String column : setOfColumns) {
@@ -71,6 +70,7 @@ abstract class CommonTest {
             }
             listOfColumns = listOfColumns.replaceFirst(",", " ");
             listOfColumns += " )";
+            // create a sql query string to insert test results to table
             for (Map item : resultsList) {
                 String insertTestTable = "";
                 for (String column : setOfColumns)
@@ -78,6 +78,7 @@ abstract class CommonTest {
                 insertTestTable = insertTestTable.replaceFirst(",", " ");
                 insertTestTable = "INSERT INTO " + tableName + listOfColumns + " VALUES ( " + insertTestTable;
                 insertTestTable += " )";
+                // execute SQL query to insert data into table
                 st.executeUpdate(insertTestTable);
             }
             conn.close();

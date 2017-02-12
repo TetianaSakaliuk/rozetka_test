@@ -46,14 +46,13 @@ public class SmartphonePage extends CommonPage {
         waiteUntilPageLoaded();
     }
 
-    public List<Map> getListOfTopsFromSeverelPages(int maxPage) {
+    public List<Map> getListOfTopsFromSeveralPages(int maxPage) {
         List<Map> listOfTops = new ArrayList<Map>();
         listOfTops.addAll(getListOfTops(5));
         for (int pageNumber = 2; pageNumber <= maxPage; pageNumber++) {
             switchToResultPage(pageNumber);
             listOfTops.addAll(getListOfTops(5));
         }
-
         return listOfTops;
     }
 

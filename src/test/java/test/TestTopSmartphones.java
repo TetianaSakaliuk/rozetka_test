@@ -22,7 +22,8 @@ public class TestTopSmartphones extends CommonTest {
         telephonePage.clickMenu();
 
         SmartphonePage smartphonePage = new SmartphonePage(driver, "smartfon");
-        List<Map> listOfTops = smartphonePage.getListOfTopsFromSeverelPages(3);
+        List<Map> listOfTops = smartphonePage.getListOfTopsFromSeveralPages(3);
+
         System.out.println("Was found: " + listOfTops.size() + "top-smartphones");
         writeResultsToDb(listOfTops);
 
